@@ -1,6 +1,12 @@
 # big_task_small_model_long_running_llm_apps
 This application uses smallers models from ollama to do bigger tasks it can't do correctly in a single prompt by asking it to do it in multiple prompts
 
+## Pre-requisite
+1. install ollama from https://ollama.com/download
+2. download qwen3 model from ollama run qwen3:1.7b
+3. install node and java for the respective tools
+4. install postgresdb server in your local
+
 # To run pg2_db_explorer
 
 ```
