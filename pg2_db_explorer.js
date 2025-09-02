@@ -259,7 +259,7 @@ async function main() {
 
         console.log('Analyzing cross-table relationships and generating JOIN queries...');
         const crossTableResponse = await sendOllamaRequest(crossTablePayload, crossTableOptions);
-
+        const crossQueryInsights = [];
         try {
             const crossTableAnalysis = JSON.parse(crossTableResponse);
 
@@ -286,6 +286,10 @@ async function main() {
                             const crossQueryResult = await client.query(queryInfo.sql);
                             console.log('Results:');
                             console.table(crossQueryResult.rows);
+                            crossQueryInsights.push({
+                                sql: queryInfo.sql,
+                                rows: crossQueryResult.rows,
+                            });
                         } catch (queryError) {
                             console.error(`Error executing cross-table query:`, queryError.message);
                         }
@@ -298,7 +302,7 @@ async function main() {
             console.error('Error parsing cross-table analysis:', parseError.message);
             console.log('Raw response:', crossTableResponse);
         }
-
+        await sendSummaryToModel(crossQueryInsights);
     } catch (err) {
         console.error('An error occurred:', err.message);
     } finally {
@@ -308,6 +312,55 @@ async function main() {
         console.log('\n=== ANALYSIS COMPLETE ===');
         console.log(`Total tables analyzed: ${allInsights.length}`);
         console.log('Individual insights collected and cross-table analysis performed.');
+    }
+}
+
+// Add this new function at the end of the file, before the main() call
+async function sendSummaryToModel(insights) {
+    console.log('\n=== SENDING CROSS-QUERY INSIGHTS FOR SUMMARY ===');
+
+    if (insights.length === 0) {
+        console.log('No cross-query insights to summarize.');
+        return;
+    }
+
+    // Prepare the prompt for the summary
+    const summaryPrompt = `
+        Here are the results from several database cross-table queries.
+        Please provide a short summary of the key insights and what they reveal about the data.
+        
+        Collected Insights:
+        ${JSON.stringify(insights, null, 2)}
+    `;
+
+    const ollamaPayload = JSON.stringify({
+        model: modelName,
+        messages: [{ role: 'user', content: summaryPrompt }],
+        stream: true,
+        think: false,
+        options: {
+            temperature: 0.3,
+            think: false,
+        },
+    });
+
+    const ollamaOptions = {
+        hostname: 'localhost',
+        port: 11434,
+        path: '/api/chat',
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Content-Length': Buffer.byteLength(ollamaPayload),
+        },
+    };
+
+    try {
+        const summaryResponse = await sendOllamaRequest(ollamaPayload, ollamaOptions);
+        console.log('\n=== MODEL SUMMARY OF INSIGHTS ===');
+        console.log(summaryResponse);
+    } catch (e) {
+        console.error('Error getting summary from the model:', e.message);
     }
 }
 
