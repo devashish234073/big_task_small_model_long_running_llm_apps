@@ -128,7 +128,7 @@ async function main() {
                 Then, provide a single, working SQL SELECT query that supports your insight.
                 Your response must be a valid JSON object with two fields:
                 - "insight": a string containing your analysis.
-                - "query": a string containing the supporting SQL query.
+                - "queries": a list containing SQL queries(max 3) to get various insights like max, min average, etc along with labels, so each query element will look like {"query": "SQL_QUERY_HERE", "label": "DESCRIPTION_HERE"}
             `;
 
             const ollamaPayload = JSON.stringify({
@@ -160,7 +160,7 @@ async function main() {
                 // Parse the complete JSON response from the model
                 const modelResponse = JSON.parse(streamingResponse);
                 const insight = modelResponse.insight;
-                const supportingQuery = modelResponse.query;
+                const supportingQuery = modelResponse.queries;
 
                 console.log(`\n\tOllama Insight: ${insight}`);
                 console.log(`\tOllama Suggested Query: ${supportingQuery}`);
@@ -169,17 +169,19 @@ async function main() {
                 allInsights.push({
                     tableName,
                     insight,
-                    query: supportingQuery,
+                    queries: supportingQuery,
                     schema
                 });
 
                 // Execute the query provided by the model
-                if (supportingQuery) {
+                if (supportingQuery && supportingQuery.length > 0) {
                     try {
-                        console.log('\tExecuting the suggested query...');
-                        const supportQueryResult = await client.query(supportingQuery);
-                        console.log('\tQuery Results:');
-                        console.table(supportQueryResult.rows);
+                        for (let i = 0; i < supportingQuery.length; i++) {
+                            console.log(`\tExecuting '${supportingQuery[i].query}'`);
+                            const supportQueryResult = await client.query(supportingQuery[i].query);
+                            console.log(`\t${supportingQuery[i].label}:`);
+                            console.table(supportQueryResult.rows);
+                        }
                     } catch (queryError) {
                         console.error(`\tError executing the suggested query:`, queryError.message);
                     }
@@ -280,7 +282,7 @@ async function main() {
                     // Execute the cross-table query
                     if (queryInfo.sql) {
                         try {
-                            console.log('\nExecuting cross-table query...');
+                            console.log(`\nExecuting cross-table query...${queryInfo.sql}`);
                             const crossQueryResult = await client.query(queryInfo.sql);
                             console.log('Results:');
                             console.table(crossQueryResult.rows);
