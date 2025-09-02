@@ -1,0 +1,25 @@
+{
+  "name": "big_task_small_model_long_running_llm_apps",
+  "version": "1.0.0",
+  "description": "This application uses smallers models from ollama to do bigger tasks it can't do correctly in a single prompt by asking it to do it in multiple prompts",
+  "main": "pg2_db_emplorer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/devashish234073/big_task_small_model_long_running_llm_apps.git"
+  },
+  "keywords": [
+    "llm"
+  ],
+  "author": "Devashish Priyadarshi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/devashish234073/big_task_small_model_long_running_llm_apps/issues"
+  },
+  "homepage": "https://github.com/devashish234073/big_task_small_model_long_running_llm_apps#readme",
+  "dependencies": {
+    "pg": "^8.16.3"
+  }
+}
