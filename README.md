@@ -10,9 +10,19 @@ npm install
 node pg2_db_explorer.js postgres
 ```
 
-For the provided database name from the command line arg it first gets all the tables by running a postgres query and then runs select query on each table,
-sends the data to the model to analyze and share insights and query to see that insight.
-All such insights are stored in a list and at the end all the collected insights are shared back to the model to return join queries, which the application then runs again
+For the provided database name from the command line arg it runs:
+steps that it runs:
+
+1. [node] run a query to list all the tables 
+2. [node] sends the first table to the model and asks for structured queries to get some insight out of the current table
+3. [model] returns the list of queries to run with label and "insights"
+4. [node] sends next table from the db to the model
+5. [model] repeats #3
+6. [node] once all tables are analyzed insights from all the tables are sent back to the model to share join queries to get further analysis
+7. [model] returns list of join queries with business values for each
+8. [node] run the join queries and "collects the data"
+9. [node] sends the collected data back to the model to share a final insights
+10. [model] returns a summarized insight from all the data of join query shared from above.
 
 <img width="1422" height="1020" alt="image" src="https://github.com/user-attachments/assets/5ac1611f-2944-40c0-90d4-5fb20f987ca0" />
 
