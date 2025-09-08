@@ -32,6 +32,12 @@ steps that it runs:
 
 <img width="1422" height="1020" alt="image" src="https://github.com/user-attachments/assets/5ac1611f-2944-40c0-90d4-5fb20f987ca0" />
 
+# For details of springboot-app-analyzer.js refer to this post:
+
+https://www.linkedin.com/posts/devashish-priyadarshi-96554112b_llm-springboot-codeabrfixabrusingabrllm-activity-7370695859153522688-Hiq0?utm_source=share&utm_medium=member_desktop&rcm=ACoAAB_v_B0B3953zoesstM-BJmeuZA94BtFpDI
+
+Sample Output :
+<img width="859" height="588" alt="image" src="https://github.com/user-attachments/assets/ccb7aaef-d156-438c-93bf-74c274be9d28" />
 
 # To run java_feature_explorer
 
